@@ -20,6 +20,8 @@
     "lokka": "1.7.0",
     "lokka-transport-http": "1.6.1",
     "morgan": "1.9.1",
+    "node-fetch": "^2.3.0",
+    "promise": "^8.0.2",
     "redis": "2.8.0",
     "winston": "3.2.1"
   },

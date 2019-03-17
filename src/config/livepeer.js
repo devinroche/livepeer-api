@@ -1,6 +1,8 @@
 import LivepeerSDK from '@livepeer/sdk';
-const Lokka = require('lokka').Lokka;
-const Transport = require('lokka-transport-http').Transport;
+import { Lokka } from 'lokka';
+import fetch from 'node-fetch';
+import {Transport} from 'lokka-transport-http';
+import Promise from "promise";
 
 const client = new Lokka({
   transport: new Transport('https://api.thegraph.com/subgraphs/name/adamsoffer/livepeer-canary')
@@ -22,13 +24,18 @@ const query = `
 export const fetchData = async (address) => {
   const sdk = await LivepeerSDK();
   const { rpc } = sdk;
-  const user = await rpc.getDelegator(address.toLowerCase());
 
-  const vars = {
-    address: user.address
-  }
+  const user_req = rpc.getDelegator(address.toLowerCase());
+  const qraph_req = client.query(query, {
+    address: address.toLowerCase()
+  })
+  const price_req = fetch("https://api.cryptonator.com/api/ticker/lpt-usd");
 
-  const { delegator } = await client.query(query, vars)
+  const results = await Promise.all([user_req, qraph_req, price_req])
+  
+  const user = results[0]
+  const { delegator } = results[1]
+  const { ticker: {price}} = await results[2].json()
 
-  return { ...user, ...delegator }
+  return { ...user, ...delegator, price: price }
 }
