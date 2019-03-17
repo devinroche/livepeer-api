@@ -21,20 +21,29 @@ var _sdk = require('@livepeer/sdk');
 
 var _sdk2 = _interopRequireDefault(_sdk);
 
+var _lokka = require('lokka');
+
+var _nodeFetch = require('node-fetch');
+
+var _nodeFetch2 = _interopRequireDefault(_nodeFetch);
+
+var _lokkaTransportHttp = require('lokka-transport-http');
+
+var _promise = require('promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Lokka = require('lokka').Lokka;
-var Transport = require('lokka-transport-http').Transport;
-
-var client = new Lokka({
-  transport: new Transport('https://api.thegraph.com/subgraphs/name/adamsoffer/livepeer-canary')
+var client = new _lokka.Lokka({
+  transport: new _lokkaTransportHttp.Transport('https://api.thegraph.com/subgraphs/name/adamsoffer/livepeer-canary')
 });
 
 var query = '\n  query User($address: String!) {\n    delegator(first: 1, id: $address) {\n      shares {\n        rewardTokens\n        round {\n          timestamp\n        }\n      }\n    }\n  }\n';
 
 var fetchData = exports.fetchData = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(address) {
-    var sdk, rpc, user, vars, _ref2, delegator;
+    var sdk, rpc, user_req, qraph_req, price_req, results, user, delegator, _ref2, price;
 
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
@@ -46,23 +55,27 @@ var fetchData = exports.fetchData = function () {
           case 2:
             sdk = _context.sent;
             rpc = sdk.rpc;
-            _context.next = 6;
-            return rpc.getDelegator(address.toLowerCase());
+            user_req = rpc.getDelegator(address.toLowerCase());
+            qraph_req = client.query(query, {
+              address: address.toLowerCase()
+            });
+            price_req = (0, _nodeFetch2.default)("https://api.cryptonator.com/api/ticker/lpt-usd");
+            _context.next = 9;
+            return _promise2.default.all([user_req, qraph_req, price_req]);
 
-          case 6:
-            user = _context.sent;
-            vars = {
-              address: user.address
-            };
-            _context.next = 10;
-            return client.query(query, vars);
+          case 9:
+            results = _context.sent;
+            user = results[0];
+            delegator = results[1].delegator;
+            _context.next = 14;
+            return results[2].json();
 
-          case 10:
+          case 14:
             _ref2 = _context.sent;
-            delegator = _ref2.delegator;
-            return _context.abrupt('return', (0, _extends3.default)({}, user, delegator));
+            price = _ref2.ticker.price;
+            return _context.abrupt('return', (0, _extends3.default)({}, user, delegator, { price: price }));
 
-          case 13:
+          case 17:
           case 'end':
             return _context.stop();
         }

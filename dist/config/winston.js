@@ -36,7 +36,7 @@ var logger = new createLogger({
 });
 
 logger.stream = {
-  write: function write(message, encoding) {
+  write: function write(message) {
     logger.info(message);
   }
 };

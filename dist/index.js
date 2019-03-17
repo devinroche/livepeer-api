@@ -12,6 +12,8 @@ var _routes = require('./routes');
 
 var _routes2 = _interopRequireDefault(_routes);
 
+require('babel-polyfill');
+
 var _morgan = require('morgan');
 
 var _morgan2 = _interopRequireDefault(_morgan);
