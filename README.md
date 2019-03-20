@@ -4,9 +4,8 @@
 ## to do
 - [x] logging
 - [x] caching
+- [x] deploy to heroku
+- [x] automate deploy
 - [ ] unit test
-- [ ] deploy to heroku
-- [ ] automate deploy
-- [ ] cors
+- [x] cors
 - [ ] try-catch error handling
-- [ ] pm2?

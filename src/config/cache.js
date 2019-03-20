@@ -2,14 +2,13 @@ const redis = require('redis');
 import logger from './winston';
 require('dotenv').config();
 
-// exposing credentials cuz its the weekend and i dont care
 export const client = redis.createClient({
   host: process.env.REDIS_URL,
   port: process.env.REDIS_PORT,
   password: process.env.REDIS_PASSWORD
 });
 
-// not yet implemented
+// not working yet
 export const getUser = (address) => {
   client.get(address.toLowerCase(), async (err,value) => {
     if (err) {

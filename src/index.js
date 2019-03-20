@@ -2,6 +2,7 @@ import cluster from 'cluster';
 import express from 'express';
 import routes from './routes';
 import 'babel-polyfill';
+import cors from 'cors';
 import morgan from 'morgan';
 import logger from './config/winston';
 
@@ -19,9 +20,10 @@ if (cluster.isMaster){
     const port = process.env.PORT || 8080
     const router = express.Router();
 
+    app.use(cors())
     app.use('/api', router);
     app.use(morgan('combined', { stream: logger.stream }));
-	app.listen(port, () => console.log(`Worker ${cluster.worker.id} running!`));
+	  app.listen(port, () => console.log(`Worker ${cluster.worker.id} running!`));
 
     routes(router)
 }
