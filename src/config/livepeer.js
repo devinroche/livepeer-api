@@ -54,11 +54,10 @@ export const fetchData = async (address) => {
   const user = results[0]
   const sharesData = results[1]
 
-  const histo_req = await fetch(`https://min-api.cryptocompare.com/data/histoday?fsym=LPT&tsym=USD&limit=${sharesData.length}&api_key=${process.env.CRYPTO_COMPARE_KEY}`)
+  const histo_req = await fetch(`https://min-api.cryptocompare.com/data/histoday?fsym=LPT&tsym=USD&limit=${sharesData.length + 20}&api_key=${process.env.CRYPTO_COMPARE_KEY}`)
   const { Data } = await histo_req.json()
-  let sharesPrice = await combinePriceSharesArr(sharesData, Data)
 
-  // percent change USD
+  let sharesPrice = await combinePriceSharesArr(sharesData, Data)
 
   const totalRewardsLPT = sharesPrice.reduce((prev, curr) => {
     return prev + curr.convertedReward;
